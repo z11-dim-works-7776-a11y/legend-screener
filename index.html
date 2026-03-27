@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10大投資家 レジェンドスクリーナー</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Share+Tech+Mono&family=Bebas+Neue&display=swap');
+:root{--bg:#070b14;--surface:#0f1726;--surf2:#162035;--gold:#f0b429;--gold2:#ffd166;--green:#10b981;--red:#ef4444;--orange:#f97316;--text:#e2e8f0;--muted:#64748b;--border:rgba(240,180,41,0.13);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;font-size:16px;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(240,180,41,0.05),transparent),linear-gradient(rgba(240,180,41,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(240,180,41,0.02) 1px,transparent 1px);background-size:100%,40px 40px,40px 40px;pointer-events:none;z-index:0;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:#7a5a10;border-radius:99px;}
+.wrap{position:relative;z-index:1;max-width:1360px;margin:0 auto;padding:20px 16px;}
+
+/* ヘッダー */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 0 20px;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.hdr-logo{display:flex;align-items:center;gap:14px;}
+.hdr-mark{width:48px;height:48px;background:var(--gold);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.hdr-text h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);letter-spacing:.12em;line-height:1;}
+.hdr-text p{font-size:.82rem;color:var(--muted);margin-top:4px;}
+.hdr-time{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted);text-align:right;line-height:1.8;}
+
+/* タブ */
+.tabs-wrap{margin-bottom:20px;}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;}
+.tab{width:140px;padding:14px 8px;border:1px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;transition:all .2s;text-align:center;flex-shrink:0;position:relative;}
+.tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 12px 12px;background:var(--tab-color,var(--gold));opacity:0;transition:.2s;}
+.tab.active::after,.tab:hover::after{opacity:1;}
+.tab.active{border-color:var(--tab-color,var(--gold));box-shadow:0 0 16px rgba(240,180,41,.1);}
+.tab .t-icon{font-size:1.6rem;margin-bottom:5px;}
+.tab .t-name{font-size:.82rem;font-weight:700;line-height:1.4;}
+.tab .t-style{font-size:.72rem;color:var(--muted);margin-top:3px;}
+.tab.active .t-name{color:var(--tab-color,var(--gold));}
+
+/* 投資家説明 */
+.inv-desc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;display:flex;gap:14px;}
+.inv-desc .icon{font-size:2.2rem;flex-shrink:0;}
+.inv-desc h2{font-size:1.1rem;font-weight:700;margin-bottom:6px;}
+.inv-desc p{font-size:.88rem;color:var(--muted);line-height:1.9;}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.chip{background:var(--surf2);border:1px solid var(--border);border-radius:99px;padding:5px 13px;font-size:.78rem;font-family:'Share Tech Mono',monospace;}
+
+/* サマリーカード */
+.sum-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px;}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:13px;position:relative;overflow:hidden;}
+.sum-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);}
+.sum-card .lbl{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+.sum-card .val{font-family:'Share Tech Mono',monospace;font-size:1.7rem;font-weight:900;line-height:1;}
+.sum-card .sub{font-size:.78rem;color:var(--muted);margin-top:4px;}
+
+/* 緩和バナー */
+.relax-note{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.28);border-radius:9px;padding:9px 14px;font-size:.73rem;color:#fdba74;margin-bottom:14px;display:none;}
+
+/* テーブル */
+.tbl-wrap{overflow-x:auto;border-radius:11px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:.88rem;}
+thead{background:var(--surf2);}
+thead th{padding:11px 15px;text-align:left;font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;}
+tbody tr{border-top:1px solid rgba(255,255,255,.04);transition:background .12s;}
+tbody tr:hover{background:var(--surf2);}
+tbody td{padding:13px 15px;white-space:nowrap;}
+.r-rank{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--muted);}
+.r-rank.g{color:var(--gold);font-weight:700;}
+.r-ticker{font-family:'Share Tech Mono',monospace;font-weight:700;color:var(--gold2);font-size:1rem;}
+.r-name{font-size:.74rem;color:var(--text);max-width:160px;overflow:hidden;text-overflow:ellipsis;}
+.r-num{font-family:'Share Tech Mono',monospace;font-size:.92rem;}
+.up{color:var(--green);}.dn{color:var(--red);}.nu{color:var(--gold);}
+.na{color:var(--muted);font-size:.7rem;}
+.s-pill{display:inline-flex;padding:2px 9px;border-radius:99px;font-size:.63rem;font-weight:700;}
+.sh{background:rgba(16,185,129,.15);color:var(--green);}
+.sm{background:rgba(240,180,41,.12);color:var(--gold);}
+.sl{background:rgba(100,116,139,.1);color:var(--muted);}
+.j-buy{background:rgba(16,185,129,.15);color:var(--green);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700;display:inline-block;}
+.j-watch{background:rgba(240,180,41,.12);color:var(--gold);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700;display:inline-block;}
+.j-pass{background:rgba(100,116,139,.1);color:var(--muted);font-size:.62rem;padding:3px 9px;border-radius:99px;font-weight:700;display:inline-block;}
+
+/* エラー */
+.err-box{background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.28);border-radius:14px;padding:32px;text-align:center;margin-top:10px;display:none;}
+.err-box h2{color:var(--red);margin-bottom:10px;}
+.err-box p{color:var(--muted);font-size:.82rem;line-height:2;}
+code{background:var(--surf2);padding:2px 8px;border-radius:4px;font-family:'Share Tech Mono',monospace;color:var(--gold2);}
+
+/* ローディング */
+#loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;}
+.spinner{width:48px;height:48px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+#main{display:none;}
+footer{text-align:center;padding:18px 0 8px;font-size:.78rem;color:var(--muted);border-top:1px solid var(--border);margin-top:10px;line-height:2;}
+
+/* ナビタブ */
+.nav-tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px;}
+.nav-tab{padding:9px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:.82rem;font-weight:700;cursor:pointer;transition:.15s;}
+.nav-tab:hover{border-color:var(--gold);color:var(--gold);}
+.nav-tab.active{border-color:var(--gold);background:rgba(240,180,41,.12);color:var(--gold);}
+
+/* お気に入り・メモ */
+.fav-btn{background:none;border:none;cursor:pointer;font-size:1.1rem;padding:2px 4px;opacity:.4;transition:.15s;}
+.fav-btn.active{opacity:1;}
+.memo-badge{font-size:.65rem;background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);padding:2px 7px;border-radius:99px;cursor:pointer;}
+.memo-area{background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-top:10px;}
+.memo-area textarea{width:100%;background:transparent;border:none;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:.82rem;resize:vertical;min-height:60px;outline:none;line-height:1.7;}
+
+/* スコア変化バッジ */
+.diff-up{color:#10b981;font-size:.72rem;font-weight:700;}
+.diff-dn{color:#ef4444;font-size:.72rem;font-weight:700;}
+.diff-new{color:#f0b429;font-size:.68rem;}
+
+/* ヒートマップ */
+.heatmap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;padding:4px;}
+.heat-cell{border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:.15s;}
+.heat-cell:hover{transform:scale(1.04);}
+.heat-cell .hc-name{font-size:.68rem;color:rgba(255,255,255,.85);line-height:1.3;margin-bottom:4px;}
+.heat-cell .hc-score{font-family:'Share Tech Mono',monospace;font-size:.9rem;font-weight:700;color:#fff;}
+.heat-cell .hc-ticker{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.6);margin-top:2px;}
+
+/* スコア推移グラフ */
+.chart-mini{position:relative;height:200px;}
+
+/* 通知バナー */
+.notif-banner{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:12px 16px;margin-bottom:14px;display:none;font-size:.8rem;}
+.notif-banner.warn{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);}
+
+/* ナビタブ（メイン画面切り替え） */
+.nav-tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px;}
+.nav-tab{padding:8px 18px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--muted);font-size:.85rem;font-weight:700;cursor:pointer;transition:.15s;}
+.nav-tab.active{background:rgba(240,180,41,.15);border-color:rgba(240,180,41,.4);color:var(--gold);}
+.nav-tab:hover:not(.active){background:var(--surf2);}
+
+/* お気に入りボタン */
+.fav-btn{background:none;border:none;cursor:pointer;font-size:1.1rem;padding:2px 4px;transition:.2s;opacity:.4;}
+.fav-btn.active{opacity:1;}
+.fav-btn:hover{transform:scale(1.2);}
+
+/* メモ */
+.memo-badge{font-size:.65rem;background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);padding:2px 7px;border-radius:99px;cursor:pointer;}
+
+/* 前回比較バッジ */
+.rank-up{color:var(--green);font-size:.72rem;font-weight:700;}
+.rank-dn{color:var(--red);font-size:.72rem;font-weight:700;}
+.rank-new{color:var(--gold);font-size:.72rem;font-weight:700;}
+
+/* ヒートマップ */
+.heatmap-wrap{display:grid;gap:4px;margin-bottom:20px;}
+.hm-cell{border-radius:8px;padding:10px;cursor:pointer;transition:.15s;position:relative;overflow:hidden;}
+.hm-cell:hover{transform:scale(1.02);}
+.hm-cell .hm-name{font-size:.8rem;font-weight:700;margin-bottom:3px;}
+.hm-cell .hm-score{font-family:'Share Tech Mono',monospace;font-size:.72rem;}
+.hm-cell .hm-ticker{font-family:'Share Tech Mono',monospace;font-size:.65rem;opacity:.7;}
+
+/* スコア推移グラフ */
+.sparkline{display:inline-flex;align-items:flex-end;gap:2px;height:24px;}
+.spark-bar{width:5px;border-radius:2px 2px 0 0;min-height:3px;}
+
+/* 通知バナー */
+.notif-banner{position:fixed;top:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.notif{background:#0f1726;border:1px solid rgba(240,180,41,.4);border-radius:12px;padding:14px 18px;min-width:280px;pointer-events:all;animation:slideIn .3s ease;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.notif-title{font-size:.82rem;font-weight:700;color:var(--gold);margin-bottom:4px;}
+.notif-body{font-size:.75rem;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-mark">📊</div>
+    <div class="hdr-text">
+      <h1>LEGEND SCREENER</h1>
+      <p>15大投資家 マルチスクリーニング — 全米株式対応</p>
+    </div>
+  </div>
+  <div class="hdr-time" id="hdrTime">—</div>
+</div>
+
+<div id="loading"><div class="spinner"></div><p style="color:var(--muted);font-size:.85rem">データを読み込み中...</p></div>
+
+<div class="err-box" id="errBox">
+  <h2>⚠ データが見つかりません</h2>
+  <p>まず Python スクリプトを実行してください。<br><br>
+  ターミナルで：<br><code>py legend_data.py</code><br><br>
+  完了後このHTMLをブラウザで再読み込みしてください。<br>
+  ※ <code>legend_result.json</code> と同じフォルダに置いてください。</p>
+</div>
+
+<div class="notif-banner" id="notifBanner"></div>
+
+<div id="main">
+  <!-- ナビタブ -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="setView('screener',this)">📊 スクリーニング</button>
+    <button class="nav-tab" onclick="setView('heatmap',this)">🗺 ヒートマップ</button>
+    <button class="nav-tab" onclick="setView('favorites',this)">⭐ お気に入り</button>
+    <button class="nav-tab" onclick="setView('history',this)">📅 スコア推移</button>
+  </div>
+
+  <!-- スクリーニング画面 -->
+  <div id="view-screener">
+  <div class="tabs-wrap"><div class="tabs" id="tabsEl"></div></div>
+  <!-- 複数投資家通過フィルター -->
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap" id="multiFilterBar">
+  <span style="font-size:.76rem;color:var(--muted);white-space:nowrap">🏆 複数通過フィルター：</span>
+  <button onclick="setMultiFilter(0,this)"  class="mf-btn active" style="padding:6px 13px;border-radius:8px;border:1px solid rgba(240,180,41,.4);background:rgba(240,180,41,.15);color:#f0b429;font-size:.76rem;font-weight:700;cursor:pointer">全て</button>
+  <button onclick="setMultiFilter(2,this)"  class="mf-btn" style="padding:6px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:#162035;color:#64748b;font-size:.76rem;cursor:pointer">🔵 2人以上</button>
+  <button onclick="setMultiFilter(4,this)"  class="mf-btn" style="padding:6px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:#162035;color:#64748b;font-size:.76rem;cursor:pointer">🟢 4人以上</button>
+  <button onclick="setMultiFilter(6,this)"  class="mf-btn" style="padding:6px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:#162035;color:#64748b;font-size:.76rem;cursor:pointer">🟡 6人以上</button>
+  <button onclick="setMultiFilter(8,this)"  class="mf-btn" style="padding:6px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:#162035;color:#64748b;font-size:.76rem;cursor:pointer">🟠 8人以上</button>
+  <button onclick="setMultiFilter(15,this)" class="mf-btn" style="padding:6px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:#162035;color:#64748b;font-size:.76rem;cursor:pointer">🔥 全員(15人)</button>
+</div>
+
+<!-- 国タブ -->
+<div style="display:flex;gap:8px;margin-bottom:14px" id="countryTabs">
+  <button onclick="setCountry('us',this)" id="tabUS"
+    style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(240,180,41,.4);background:rgba(240,180,41,.15);color:#f0b429;font-weight:700;font-size:.82rem;cursor:pointer">
+    🇺🇸 米国株 <span id="cntUS" style="font-family:Share Tech Mono,monospace;font-size:.72rem"></span>
+  </button>
+  <button onclick="setCountry('jp',this)" id="tabJP"
+    style="flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-weight:700;font-size:.82rem;cursor:pointer">
+    🇯🇵 日本株 <span id="cntJP" style="font-family:Share Tech Mono,monospace;font-size:.72rem"></span>
+  </button>
+</div>
+<div class="inv-desc" id="invDesc"></div>
+  <div class="relax-note" id="relaxNote"></div>
+  <div class="sum-row" id="sumRow"></div>
+  <div id="dispToggle" style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"></div>
+  <div class="tbl-wrap" id="tblWrap"></div>
+  </div><!-- /view-screener -->
+
+  <!-- ヒートマップ画面 -->
+  <div id="view-heatmap" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center">
+      <span style="font-size:.82rem;color:var(--muted)">軸：</span>
+      <button onclick="setHeatmapMode('sector',this)" id="hmBtnSector"
+        style="padding:7px 14px;border-radius:8px;border:1px solid rgba(240,180,41,.4);background:rgba(240,180,41,.15);color:#f0b429;font-size:.8rem;font-weight:700;cursor:pointer">
+        セクター別
+      </button>
+      <button onclick="setHeatmapMode('investor',this)" id="hmBtnInvestor"
+        style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:.8rem;cursor:pointer">
+        投資家別
+      </button>
+    </div>
+    <div id="heatmapArea"></div>
+  </div>
+
+  <!-- お気に入り画面 -->
+  <div id="view-favorites" style="display:none">
+    <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:.9rem;font-weight:700;color:var(--gold)">⭐ お気に入り銘柄</span>
+      <button onclick="clearFavorites()" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;padding:6px 12px;border-radius:8px;font-size:.75rem;cursor:pointer">全削除</button>
+    </div>
+    <div id="favArea"></div>
+  </div>
+
+  <!-- スコア推移画面 -->
+  <div id="view-history" style="display:none">
+    <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:.9rem;font-weight:700;color:var(--gold)">📅 スコア推移 / 前回比較</span>
+      <button onclick="clearHistory()" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;padding:6px 12px;border-radius:8px;font-size:.75rem;cursor:pointer">履歴クリア</button>
+    </div>
+    <div id="historyArea"></div>
+  </div>
+
+</div>
+
+
+<!-- 銘柄詳細モーダル -->
+<div id="modalOverlay" onclick="closeModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;backdrop-filter:blur(4px)"></div>
+<div id="modalBox" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1001;width:min(640px,95vw);max-height:85vh;overflow-y:auto;background:#0f1726;border:1px solid rgba(240,180,41,0.25);border-radius:20px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.6)">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+    <div>
+      <div style="font-size:1.3rem;font-weight:900;color:#e2e8f0;font-family:'Noto Sans JP',sans-serif" id="mTicker">—</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.85rem;color:#f0b429;margin-top:3px" id="mName">—</div>
+      <div style="font-size:.72rem;color:#64748b;margin-top:1px" id="mSector">—</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        <a id="mYahooLink" href="#" target="_blank" style="background:rgba(240,180,41,.15);border:1px solid rgba(240,180,41,.3);color:#f0b429;padding:6px 11px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;white-space:nowrap">📊 Yahoo Finance</a>
+        <a id="mKabutan"   href="#" target="_blank" style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:#60a5fa;padding:6px 11px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;white-space:nowrap">📰 株探</a>
+        <a id="mMinkab"    href="#" target="_blank" style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#34d399;padding:6px 11px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;white-space:nowrap">🔍 みんかぶ</a>
+        <a id="mTweet"     href="#" target="_blank" style="background:rgba(29,161,242,.12);border:1px solid rgba(29,161,242,.3);color:#38bdf8;padding:6px 11px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;white-space:nowrap">🐦 X検索</a>
+        <a id="mSeeking"   href="#" target="_blank" style="background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:#fb923c;padding:6px 11px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;white-space:nowrap">📝 Seeking Alpha</a>
+        <a id="mFinviz"    href="#" target="_blank" style="background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.3);color:#f472b6;padding:6px 11px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;white-space:nowrap">🗺 Finviz</a>
+        <a id="mWsj"       href="#" target="_blank" style="background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.3);color:#94a3b8;padding:6px 11px;border-radius:8px;font-size:.7rem;font-weight:700;text-decoration:none;white-space:nowrap">📰 WSJ</a>
+        <button id="mFavBtn" onclick="toggleFavFromModal()" style="background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.3);color:#f0b429;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1.2rem;flex-shrink:0" title="お気に入り">☆</button>
+      <button onclick="closeModal()" style="background:rgba(100,116,139,.15);border:1px solid rgba(100,116,139,.3);color:#94a3b8;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;flex-shrink:0">✕</button>
+      </div>
+    </div>
+  </div>
+  <!-- 現在値 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+    <div style="background:#162035;border-radius:10px;padding:14px">
+      <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">現在株価</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:1.5rem;font-weight:900;color:#f0b429" id="mPrice">—</div>
+    </div>
+    <div style="background:#162035;border-radius:10px;padding:14px">
+      <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">時価総額</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:1.5rem;font-weight:900;color:#e2e8f0" id="mCap">—</div>
+    </div>
+  </div>
+  <!-- トレンド -->
+  <div style="background:#162035;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="font-size:.68rem;color:#f0b429;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📈 トレンド判定</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap" id="mTrends"></div>
+    <div style="margin-top:8px;font-size:.75rem" id="mTrendLabel"></div>
+  </div>
+  <!-- 財務指標グリッド -->
+  <div style="font-size:.68rem;color:#f0b429;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📊 財務指標</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:18px" id="mMetrics"></div>
+  <!-- メモ欄 -->
+  <div style="margin-bottom:18px">
+    <div style="font-size:.68rem;color:#f0b429;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">📝 メモ</div>
+    <textarea id="mMemoArea" placeholder="この銘柄へのメモを入力..." style="width:100%;background:#162035;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px;color:#e2e8f0;font-family:'Noto Sans JP',sans-serif;font-size:.82rem;resize:vertical;min-height:70px;outline:none" oninput="saveMemo(this.value)"></textarea>
+  </div>
+  <!-- お気に入り・メモ -->
+  <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+    <button id="mFavBtn" style="padding:7px 16px;border-radius:8px;border:1px solid;font-size:.78rem;font-weight:700;cursor:pointer;transition:.15s">☆ お気に入りに追加</button>
+  </div>
+  <div class="memo-area" style="margin-bottom:18px">
+    <div style="font-size:.68rem;color:#f0b429;font-weight:700;margin-bottom:6px">📝 メモ</div>
+    <textarea id="mMemoText" placeholder="この銘柄についてのメモを入力..."></textarea>
+  </div>
+  <!-- スコア根拠 -->
+  <div id="mScoringSection" style="display:none;margin-bottom:18px">
+    <div style="font-size:.68rem;color:#f0b429;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📋 スコア根拠（現在の投資家）</div>
+    <div id="mScoring" style="display:flex;flex-direction:column;gap:4px"></div>
+  </div>
+  <!-- 投資家別スコア -->
+  <div style="font-size:.68rem;color:#f0b429;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">🏆 投資家別スコア</div>
+  <div id="mScores" style="display:flex;flex-direction:column;gap:6px"></div>
+</div>
+
+<!-- ヒートマップセクション -->
+<div id="view-heatmap" style="display:none;margin-bottom:22px">
+  <div class="panel" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:.78rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:8px">
+        <span style="display:block;width:3px;height:14px;background:var(--gold);border-radius:2px"></span>
+        📊 銘柄ヒートマップ
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="setHeatAxis('sector',this)" id="heatBtnSector" style="padding:6px 14px;border-radius:8px;border:1px solid rgba(240,180,41,.5);background:rgba(240,180,41,.15);color:#f0b429;font-size:.76rem;font-weight:700;cursor:pointer">セクター別</button>
+        <button onclick="setHeatAxis('investor',this)" id="heatBtnInvestor" style="padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:#162035;color:#64748b;font-size:.76rem;cursor:pointer">投資家別</button>
+      </div>
+    </div>
+    <div id="heatmapGrid" class="heatmap-grid"></div>
+  </div>
+</div>
+
+<!-- スコア推移セクション -->
+<div id="view-history" style="display:none;margin-bottom:22px">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px">
+    <div style="font-size:.78rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:8px;margin-bottom:16px">
+      <span style="display:block;width:3px;height:14px;background:var(--gold);border-radius:2px"></span>
+      📈 スコア推移（過去履歴）
+    </div>
+    <canvas id="historyChart" style="width:100%;height:200px"></canvas>
+    <div style="font-size:.72rem;color:var(--muted);margin-top:8px;text-align:center" id="historyNote">履歴データがありません。複数回スキャンすると推移が表示されます。</div>
+  </div>
+</div>
+
+
+<footer>⚠ このツールは学習・研究目的です。投資はあくまで自己責任でお願いします。データはyfinanceで取得。</footer>
+</div>
+
+<script>
+const INV_ORDER = ['buffett','lynch','graham','greenblatt','oneil','dalio','dreman','neff','fisher','simons','testa','kiritani','fujino','okuno','imura'];
+const INV_META = {
+  buffett:    {icon:'🏦',name:'バフェット',   style:'クオリティ長期', color:'#f0b429',
+    desc:'財務的に優れた「堀のある企業」を長期保有。ROEの高さと安定収益成長を最重視。',
+    criteria:['ROE ≥ 15%','営業利益率 ≥ 15%','負債比率 ≤ 0.5','FCF プラス','PER ≤ 35'],
+    headers:['順位','銘柄（名称）','ROE%','営業利益率%','負債比率','PER','FCF億$','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.roe?'up':'dn'}">${F(d.ROE,'%')}</td>
+      <td class="r-num ${c.om?'up':'dn'}">${F(d.opMargin,'%')}</td>
+      <td class="r-num ${c.debt?'up':'dn'}">${F(d.debtRatio)}</td>
+      <td class="r-num ${c.per?'up':'dn'}">${F(d.PER)}</td>
+      <td class="r-num ${c.fcf?'up':'dn'}">${F(d.FCF,'億$')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  lynch:      {icon:'📈',name:'リンチ',       style:'成長×割安',     color:'#10b981',
+    desc:'PEGレシオが1.0未満の成長しているのに割安な株を狙う。中小型株を好む。',
+    criteria:['PEG ≤ 1.0','時価総額 3億〜100億ドル','EPS成長率 > 0','PER ≤ 50'],
+    headers:['順位','銘柄（名称）','PEG','PER','EPS成長率%','時価総額(十億$)','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.peg?'up':'dn'}">${F(d.PEG)}</td>
+      <td class="r-num ${c.per?'up':'dn'}">${F(d.PER)}</td>
+      <td class="r-num ${c.eps?'up':'dn'}">${F(d.epsGrowth,'%')}</td>
+      <td class="r-num nu">${F(d.marketCapB,'B$')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  graham:     {icon:'📚',name:'グレアム',     style:'ディープバリュー',color:'#8b5cf6',
+    desc:'PER×PBRが22.5未満の安全域のある割安株。流動性と財務健全性を重視。',
+    criteria:['PER × PBR ≤ 22.5','流動比率 ≥ 200%','PER ≤ 15','PBR ≤ 1.5','負債比率 ≤ 1.0'],
+    headers:['順位','銘柄（名称）','PER','PBR','PER×PBR','流動比率%','負債比率','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.per?'up':'dn'}">${F(d.PER)}</td>
+      <td class="r-num ${c.pbr?'up':'dn'}">${F(d.PBR)}</td>
+      <td class="r-num ${c.gn?'up':'dn'}">${F(d.perPbr)}</td>
+      <td class="r-num ${c.cr?'up':'dn'}">${d.currentRatio!=null?(d.currentRatio*100).toFixed(0)+'%':'<span class="na">—</span>'}</td>
+      <td class="r-num ${c.debt?'up':'dn'}">${F(d.debtRatio)}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  greenblatt: {icon:'🧮',name:'グリーンブラット',style:'魔法の公式',  color:'#14b8a6',
+    desc:'ROIC（投下資本利益率）と益回りの2指標で総合順位が高い銘柄を選ぶ。',
+    criteria:['ROE ≥ 25%（ROIC代替）','営業利益率 ≥ 20%（益回り代替）','PER ≤ 30','時価総額 ≥ 5億ドル'],
+    headers:['順位','銘柄（名称）','ROE%','営業利益率%','PER','時価総額(十億$)','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.roic?'up':'dn'}">${F(d.ROE,'%')}</td>
+      <td class="r-num ${c.ey?'up':'dn'}">${F(d.opMargin,'%')}</td>
+      <td class="r-num ${c.per?'up':'dn'}">${F(d.PER)}</td>
+      <td class="r-num nu">${F(d.marketCapB,'B$')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  oneil:      {icon:'🚀',name:'オニール',     style:'CAN SLIM',      color:'#f97316',
+    desc:'EPS成長率25%以上の高成長株で株価が52週高値圏にあるモメンタム株を狙う。',
+    criteria:['EPS成長率 ≥ 25%','52週高値の85%以上','売上成長 ≥ 20%','ROE ≥ 17%'],
+    headers:['順位','銘柄（名称）','EPS成長率%','52週高値比%','ROE%','売上成長%','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.eps?'up':'dn'}">${F(d.epsGrowth,'%')}</td>
+      <td class="r-num ${c.w52?'up':'dn'}">${d.w52Ratio!=null?(d.w52Ratio*100).toFixed(1)+'%':'<span class="na">—</span>'}</td>
+      <td class="r-num ${c.roe?'up':'dn'}">${F(d.ROE,'%')}</td>
+      <td class="r-num ${c.rev?'up':'dn'}">${F(d.revGrowth,'%')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  dalio:      {icon:'⚖️',name:'ダリオ',       style:'オールウェザー', color:'#06b6d4',
+    desc:'景気サイクルのどの局面でも耐えられる全天候型。低ボラ・高配当・安定収益重視。',
+    criteria:['配当利回り ≥ 2%','負債比率 ≤ 0.8','営業利益率 ≥ 10%','PBR ≤ 3.0','ROE ≥ 8%'],
+    headers:['順位','銘柄（名称）','配当利回り%','負債比率','営業利益率%','PBR','ROE%','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.div?'up':'dn'}">${F(d.divYield,'%')}</td>
+      <td class="r-num ${c.debt?'up':'dn'}">${F(d.debtRatio)}</td>
+      <td class="r-num ${c.om?'up':'dn'}">${F(d.opMargin,'%')}</td>
+      <td class="r-num ${c.pbr?'up':'dn'}">${F(d.PBR)}</td>
+      <td class="r-num ${c.roe?'up':'dn'}">${F(d.ROE,'%')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  dreman:     {icon:'🔄',name:'ドレマン',     style:'逆張りバリュー', color:'#ec4899',
+    desc:'市場が嫌う低PER・低PBR銘柄の逆張り投資。悲観が極まった銘柄に回帰を期待。',
+    criteria:['PER ≤ 10','PBR ≤ 1.0','配当利回り ≥ 2%','負債比率 ≤ 1.0'],
+    headers:['順位','銘柄（名称）','PER','PBR','配当利回り%','負債比率','営業利益率%','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.per?'up':'dn'}">${F(d.PER)}</td>
+      <td class="r-num ${c.pbr?'up':'dn'}">${F(d.PBR)}</td>
+      <td class="r-num ${c.div?'up':'dn'}">${F(d.divYield,'%')}</td>
+      <td class="r-num ${c.debt?'up':'dn'}">${F(d.debtRatio)}</td>
+      <td class="r-num nu">${F(d.opMargin,'%')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  neff:       {icon:'💰',name:'ネフ',         style:'低PER高配当',    color:'#a3e635',
+    desc:'低PERかつ高配当利回りの銘柄。「トータルリターン÷PER」のネフ指数が高い銘柄を好む。',
+    criteria:['PER ≤ 10','配当利回り ≥ 3%','EPS成長率 ≥ 7%','営業利益率 ≥ 10%'],
+    headers:['順位','銘柄（名称）','PER','配当利回り%','EPS成長率%','ネフ指数','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.per?'up':'dn'}">${F(d.PER)}</td>
+      <td class="r-num ${c.div?'up':'dn'}">${F(d.divYield,'%')}</td>
+      <td class="r-num ${c.eps?'up':'dn'}">${F(d.epsGrowth,'%')}</td>
+      <td class="r-num nu">${F(d.neffIdx)}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  fisher:     {icon:'📉',name:'フィッシャー', style:'PSR重視',        color:'#c084fc',
+    desc:'株価売上高比率（PSR）が低い大型株を狙う。売上成長も重視。',
+    criteria:['PSR ≤ 1.5','時価総額 ≥ 10億ドル','売上成長率 ≥ 10%','営業利益率 ≥ 5%'],
+    headers:['順位','銘柄（名称）','PSR','時価総額(十億$)','売上成長%','営業利益率%','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.psr?'up':'dn'}">${F(d.PSR)}</td>
+      <td class="r-num nu">${F(d.marketCapB,'B$')}</td>
+      <td class="r-num ${c.rev?'up':'dn'}">${F(d.revGrowth,'%')}</td>
+      <td class="r-num ${c.om?'up':'dn'}">${F(d.opMargin,'%')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  simons:     {icon:'🤖',name:'サイモンズ',   style:'クオンツ近似',   color:'#67e8f9',
+    desc:'34年間ほぼ負けなしの伝説的クオンツ。モメンタム・成長・低ボラの複合条件で近似。',
+    criteria:['52週高値圏 ≥ 80%','EPS成長率 ≥ 15%','売上成長率 ≥ 10%','ROE ≥ 15%','PEG ≤ 2.0'],
+    headers:['順位','銘柄（名称）','52週高値比%','EPS成長率%','売上成長%','ROE%','PEG','スコア','判定','トレンド','総合'],
+    row(d,i){const c=d.checks;return `${R(i)}${TK(d)}${NM(d)}
+      <td class="r-num ${c.w52?'up':'dn'}">${d.w52Ratio!=null?(d.w52Ratio*100).toFixed(1)+'%':'<span class="na">—</span>'}</td>
+      <td class="r-num ${c.eps?'up':'dn'}">${F(d.epsGrowth,'%')}</td>
+      <td class="r-num ${c.rev?'up':'dn'}">${F(d.revGrowth,'%')}</td>
+      <td class="r-num ${c.roe?'up':'dn'}">${F(d.ROE,'%')}</td>
+      <td class="r-num ${c.peg?'up':'dn'}">${F(d.PEG)}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  testa:      {icon:'🎯',name:'テスタ',       style:'高配当・安定収益',  color:'#ff6b6b',
+    desc:'日本の著名個人投資家。高配当・安定収益・低負債の銘柄を長期保有。配当利回りと財務健全性を最重視。',
+    criteria:['配当利回り ≥ 3%','ROE ≥ 10%','負債比率 ≤ 1.0','営業利益率 ≥ 10%','FCF プラス'],
+    headers:['順位','銘柄（名称）','配当利回り%','ROE%','負債比率','営業利益率%','FCF億$','スコア','判定','トレンド','総合'],
+    row(d,i){const r=d.checks;return `${R(i)}${TK(d)}
+      <td class="r-num ${r.div?'up':'dn'}">${F(d.divYield,'%')}</td>
+      <td class="r-num ${r.roe?'up':'dn'}">${F(d.ROE,'%')}</td>
+      <td class="r-num ${r.debt?'up':'dn'}">${F(d.debtRatio)}</td>
+      <td class="r-num ${r.om?'up':'dn'}">${F(d.opMargin,'%')}</td>
+      <td class="r-num ${r.fcf?'up':'dn'}">${F(d.FCF,'億$')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  kiritani:   {icon:'🎁',name:'桐谷広人',     style:'優待・高配当',      color:'#fb923c',
+    desc:'株主優待投資の第一人者。高配当・割安バリュー・株主優待が充実した銘柄を長期保有。',
+    criteria:['配当利回り ≥ 2%','PER ≤ 15','PBR ≤ 1.2','負債比率 ≤ 1.0','FCF プラス'],
+    headers:['順位','銘柄（名称）','配当利回り%','PER','PBR','負債比率','FCF億$','スコア','判定','トレンド','総合'],
+    row(d,i){const r=d.checks;return `${R(i)}${TK(d)}
+      <td class="r-num ${r.div?'up':'dn'}">${F(d.divYield,'%')}</td>
+      <td class="r-num ${r.per?'up':'dn'}">${F(d.PER)}</td>
+      <td class="r-num ${r.pbr?'up':'dn'}">${F(d.PBR)}</td>
+      <td class="r-num ${r.debt?'up':'dn'}">${F(d.debtRatio)}</td>
+      <td class="r-num ${r.fcf?'up':'dn'}">${F(d.FCF,'億$')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  fujino:     {icon:'🌱',name:'藤野英人',     style:'成長・ROE重視',     color:'#4ade80',
+    desc:'ひふみ投信創業者。高ROE・成長企業を長期保有。「応援したい会社に投資する」哲学。',
+    criteria:['ROE ≥ 15%','EPS成長率 ≥ 10%','売上成長率 ≥ 10%','営業利益率 ≥ 10%','負債比率 ≤ 1.5'],
+    headers:['順位','銘柄（名称）','ROE%','EPS成長率%','売上成長%','営業利益率%','負債比率','スコア','判定','トレンド','総合'],
+    row(d,i){const r=d.checks;return `${R(i)}${TK(d)}
+      <td class="r-num ${r.roe?'up':'dn'}">${F(d.ROE,'%')}</td>
+      <td class="r-num ${r.eps?'up':'dn'}">${F(d.epsGrowth,'%')}</td>
+      <td class="r-num ${r.rev?'up':'dn'}">${F(d.revGrowth,'%')}</td>
+      <td class="r-num ${r.om?'up':'dn'}">${F(d.opMargin,'%')}</td>
+      <td class="r-num ${r.debt?'up':'dn'}">${F(d.debtRatio)}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  okuno:      {icon:'🏯',name:'奥野一成',     style:'参入障壁・本質価値', color:'#a78bfa',
+    desc:'農林中金バリューインベストメンツCIO。高ROE・高利益率・低負債の参入障壁が高い企業に長期集中投資。',
+    criteria:['ROE ≥ 20%','営業利益率 ≥ 20%','負債比率 ≤ 0.5','EPS成長率 ≥ 5%','FCF プラス'],
+    headers:['順位','銘柄（名称）','ROE%','営業利益率%','負債比率','EPS成長率%','FCF億$','スコア','判定','トレンド','総合'],
+    row(d,i){const r=d.checks;return `${R(i)}${TK(d)}
+      <td class="r-num ${r.roe?'up':'dn'}">${F(d.ROE,'%')}</td>
+      <td class="r-num ${r.om?'up':'dn'}">${F(d.opMargin,'%')}</td>
+      <td class="r-num ${r.debt?'up':'dn'}">${F(d.debtRatio)}</td>
+      <td class="r-num ${r.eps?'up':'dn'}">${F(d.epsGrowth,'%')}</td>
+      <td class="r-num ${r.fcf?'up':'dn'}">${F(d.FCF,'億$')}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}},
+  imura:      {icon:'🎭',name:'井村俊哉',     style:'売上成長×割安',    color:'#f43f5e',
+    desc:'元お笑い芸人から100万円を85億円に育てた伝説の個人投資家。売上・粗利が急成長しPERが成長率より低い割安成長株に集中投資。',
+    criteria:['売上成長率 ≥ 20%','EPS成長率 ≥ 20%','PEG < 1.0（割安成長）','52週高値75%以上','営業利益率 ≥ 10%'],
+    headers:['順位','銘柄（名称）','売上成長%','EPS成長%','PEG','営業利益率%','52週高値比%','スコア','判定','トレンド','総合'],
+    row(d,i){const r=d.checks;return `${R(i)}${TK(d)}
+      <td class="r-num ${r.rev?'up':'dn'}">${F(d.revGrowth,'%')}</td>
+      <td class="r-num ${r.eps?'up':'dn'}">${F(d.epsGrowth,'%')}</td>
+      <td class="r-num ${r.peg?'up':'dn'}">${F(d.PEG)}</td>
+      <td class="r-num ${r.om?'up':'dn'}">${F(d.opMargin,'%')}</td>
+      <td class="r-num ${r.w52?'up':'dn'}">${d.w52Ratio!=null?(d.w52Ratio*100).toFixed(1)+'%':'<span class="na">—</span>'}</td>
+      ${SC(d)}${JD(d)}${TR(d)}`;}}
+};
+
+// トレンド表示ヘルパー
+function TR(d){
+  const t52  = d.trend52w  ? '<span style="color:#10b981">↑52W</span>' : '<span style="color:#64748b">－52W</span>';
+  const teps = d.trendEps  ? '<span style="color:#10b981">↑EPS</span>' : '<span style="color:#64748b">－EPS</span>';
+  const trev = d.trendRev  ? '<span style="color:#10b981">↑売上</span>': '<span style="color:#64748b">－売上</span>';
+  const sc   = d.trendScore||0;
+  const col  = sc===3?'#10b981':sc===2?'#f0b429':sc===1?'#f97316':'#ef4444';
+  return `<td><div style="display:flex;flex-direction:column;gap:2px;font-size:.62rem">${t52}${teps}${trev}</div></td>
+    <td><span style="font-family:Share Tech Mono,monospace;font-size:.72rem;color:${col}">${d.trendLabel||'—'}</span></td>`;
+}
+
+// ヘルパー
+function F(v,u=''){if(v==null)return '<span class="na">—</span>';return (+v).toFixed(2)+u;}
+function R(i){const m=['🥇','🥈','🥉'];return `<td class="r-rank ${i<=3?'g':''}">${i<=3?m[i-1]:'#'+i}</td>`;}
+let _tickerCountMap = null;
+let _allData = null; // 全銘柄データのキャッシュ
+
+function TK(d){
+  const badge   = _tickerCountMap ? getTickerBadge(d.ticker,_tickerCountMap) : '';
+  const enc     = encodeURIComponent(d.ticker);
+  const isFav   = getFavs().has(d.ticker);
+  const hasMemo = !!getMemo(d.ticker);
+  const diffHtml = d.scoreDiff!=null
+    ? (d.scoreDiff>0 ? `<span class="diff-up">▲${d.scoreDiff}</span>`
+      :d.scoreDiff<0 ? `<span class="diff-dn">▼${Math.abs(d.scoreDiff)}</span>`
+      : '')
+    : (d.scoreDiff===null ? `<span class="diff-new">NEW</span>` : '');
+  return `<td style="white-space:nowrap">
+    <div style="display:flex;align-items:center;gap:6px">
+      <button class="fav-btn ${isFav?'active':''}" onclick="toggleFav('${d.ticker}',this)" title="お気に入り">⭐</button>
+      <div style="cursor:pointer" onclick="openModal(decodeURIComponent('${enc}'))">
+        <div style="font-size:.9rem;font-weight:700;color:#e2e8f0;max-width:160px;overflow:hidden;text-overflow:ellipsis;text-decoration:underline;text-underline-offset:3px">${d.name||d.ticker}${badge}</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:#f0b429">${d.ticker}</span>
+          ${diffHtml}
+          ${hasMemo?'<span class="memo-badge">📝</span>':''}
+        </div>
+      </div>
+    </div>
+  </td>`;
+}
+
+function openModal(ticker){
+  // 全投資家の結果から該当銘柄データを探す
+  let d = null;
+  for(const inv of Object.values(DATA.screened)){
+    const found = (inv.results||[]).find(r=>r.ticker===ticker);
+    if(found){d=found;break;}
+  }
+  if(!d)return;
+
+  // 日本株判定（.T で終わるティッカー）← 最初に宣言
+  const isJP = ticker.endsWith('.T');
+  const jpCode = ticker.replace('.T','');
+
+  document.getElementById('mTicker').textContent  = d.name||ticker;
+  document.getElementById('mName').textContent    = ticker;
+  document.getElementById('mSector').textContent  = (isJP ? '🇯🇵 日本株 / ' : '🇺🇸 米国株 / ') + (d.sector||'—');
+  document.getElementById('mPrice').textContent   = d.price!=null?'$'+d.price.toFixed(2):'—';
+  document.getElementById('mCap').textContent     = d.marketCapB!=null?d.marketCapB.toFixed(1)+'B$':'—';
+
+  document.getElementById('mYahooLink').href = isJP
+    ? `https://finance.yahoo.co.jp/quote/${jpCode}.T`
+    : `https://finance.yahoo.com/quote/${ticker}`;
+  document.getElementById('mKabutan').href   = isJP
+    ? `https://kabutan.jp/stock/?code=${jpCode}`
+    : `https://us.kabutan.jp/stocks/${ticker.toLowerCase()}`;
+  document.getElementById('mMinkab').href    = isJP
+    ? `https://minkabu.jp/stock/${jpCode}`
+    : `https://us.minkabu.jp/stocks/${ticker}`;
+  document.getElementById('mTweet').href     = isJP
+    ? `https://twitter.com/search?q=${jpCode}+株&src=typed_query&f=live`
+    : `https://twitter.com/search?q=%24${ticker}&src=typed_query&f=live`;
+  document.getElementById('mSeeking').href   = `https://seekingalpha.com/symbol/${ticker}`;
+  document.getElementById('mFinviz').href    = isJP
+    ? `https://www.google.com/search?q=${jpCode}+株価+チャート`
+    : `https://finviz.com/quote.ashx?t=${ticker}`;
+  document.getElementById('mWsj').href       = isJP
+    ? `https://www.google.com/search?q=${jpCode}+${d.name||''}`
+    : `https://www.wsj.com/market-data/quotes/${ticker}`;
+
+  // トレンド
+  const tItems = [
+    {label:'52週トレンド', ok: d.trend52w},
+    {label:'EPS改善中',    ok: d.trendEps},
+    {label:'売上改善中',   ok: d.trendRev},
+  ];
+  document.getElementById('mTrends').innerHTML = tItems.map(t=>
+    `<span style="padding:4px 12px;border-radius:99px;font-size:.72rem;font-weight:700;${t.ok
+      ?'background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)'
+      :'background:rgba(100,116,139,.1);color:#64748b;border:1px solid rgba(100,116,139,.2)'}">${t.ok?'↑':'－'} ${t.label}</span>`
+  ).join('');
+  const tsc = d.trendScore||0;
+  const tcol = tsc===3?'#10b981':tsc===2?'#f0b429':tsc===1?'#f97316':'#ef4444';
+  document.getElementById('mTrendLabel').innerHTML = `<span style="color:${tcol};font-weight:700">${d.trendLabel||'—'}</span>`;
+
+  // 財務指標
+  const metrics = [
+    {label:'ROE',        val: d.ROE!=null?d.ROE.toFixed(2)+'%':null,      ok: d.ROE!=null&&d.ROE>=15},
+    {label:'営業利益率', val: d.opMargin!=null?d.opMargin.toFixed(2)+'%':null, ok: d.opMargin!=null&&d.opMargin>=15},
+    {label:'負債比率',   val: d.debtRatio!=null?d.debtRatio.toFixed(3):null,   ok: d.debtRatio!=null&&d.debtRatio<=0.5},
+    {label:'PER',        val: d.PER!=null?d.PER.toFixed(2):null,          ok: d.PER!=null&&d.PER<=35},
+    {label:'PBR',        val: d.PBR!=null?d.PBR.toFixed(2):null,          ok: d.PBR!=null&&d.PBR<=1.5},
+    {label:'PEG',        val: d.PEG!=null?d.PEG.toFixed(2):null,          ok: d.PEG!=null&&d.PEG<1.0},
+    {label:'PSR',        val: d.PSR!=null?d.PSR.toFixed(2):null,          ok: d.PSR!=null&&d.PSR<=1.5},
+    {label:'EPS成長率',  val: d.epsGrowth!=null?d.epsGrowth.toFixed(2)+'%':null, ok: d.epsGrowth!=null&&d.epsGrowth>0},
+    {label:'売上成長率', val: d.revGrowth!=null?d.revGrowth.toFixed(2)+'%':null, ok: d.revGrowth!=null&&d.revGrowth>0},
+    {label:'FCF(億$)',   val: d.FCF!=null?d.FCF.toFixed(2):null,          ok: d.FCF!=null&&d.FCF>0},
+    {label:'配当利回り', val: d.divYield!=null?d.divYield.toFixed(2)+'%':null,   ok: d.divYield!=null&&d.divYield>=2},
+    {label:'流動比率',   val: d.currentRatio!=null?d.currentRatio.toFixed(2):null, ok: d.currentRatio!=null&&d.currentRatio>=2},
+  ];
+  document.getElementById('mMetrics').innerHTML = metrics.map(m=>`
+    <div style="background:#1d2a45;border-radius:8px;padding:10px 12px;border:1px solid ${m.val&&m.ok?'rgba(16,185,129,.25)':'rgba(255,255,255,.05)'}">
+      <div style="font-size:.62rem;color:#64748b;margin-bottom:3px">${m.label}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.9rem;font-weight:700;color:${m.val==null?'#475569':m.ok?'#10b981':'#e2e8f0'}">${m.val||'—'}</div>
+    </div>`).join('');
+
+  // スコア根拠（現在の投資家のscoring情報）
+  const invR = (DATA.screened[currentKey]?.results||[]).find(x=>x.ticker===ticker);
+  const scoring = invR?.scoring || {};
+  const checks  = invR?.checks  || {};
+  if(Object.keys(scoring).length > 0){
+    const scoreHtml = Object.entries(scoring).map(([key, label])=>{
+      const ok = checks[key];
+      return `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:7px;background:${ok?'rgba(16,185,129,.07)':'rgba(239,68,68,.05)'}">
+        <span style="font-size:1rem">${ok?'✅':'❌'}</span>
+        <span style="font-size:.8rem;color:${ok?'#10b981':'#64748b'};flex:1">${label}</span>
+        <span style="font-family:Share Tech Mono,monospace;font-size:.75rem;color:${ok?'#10b981':'#475569'}">${ok?'達成':'未達'}</span>
+      </div>`;
+    }).join('');
+    document.getElementById('mScoring').innerHTML = scoreHtml;
+    document.getElementById('mScoringSection').style.display='block';
+  } else {
+    document.getElementById('mScoringSection').style.display='none';
+  }
+
+  // 全投資家スコア
+  const invNames = {buffett:'🏦 バフェット',lynch:'📈 リンチ',graham:'📚 グレアム',greenblatt:'🧮 グリーンブラット',oneil:'🚀 オニール',dalio:'⚖️ ダリオ',dreman:'🔄 ドレマン',neff:'💰 ネフ',fisher:'📉 フィッシャー',simons:'🤖 サイモンズ'};
+  const scoreRows = Object.entries(DATA.screened).map(([key,inv])=>{
+    const r = (inv.results||[]).find(x=>x.ticker===ticker);
+    const sc = r?r.score:0, mx = r?r.max:8;
+    const pct = Math.round(sc/mx*100);
+    const col = pct>=75?'#10b981':pct>=50?'#f0b429':pct>=25?'#f97316':'#475569';
+    const selected = !!r;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:8px;background:${selected?'rgba(240,180,41,.06)':'transparent'}">
+      <div style="font-size:.75rem;min-width:140px;color:${selected?'#e2e8f0':'#475569'}">${invNames[key]||key}</div>
+      <div style="flex:1;background:#162035;border-radius:99px;height:5px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${col};border-radius:99px"></div>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:${col};min-width:36px;text-align:right">${sc}/${mx}</div>
+      ${selected?'<span style="font-size:.62rem;background:rgba(240,180,41,.15);color:#f0b429;padding:1px 7px;border-radius:99px">選出</span>':'<span style="font-size:.62rem;color:#475569">—</span>'}
+    </div>`;
+  }).join('');
+  document.getElementById('mScores').innerHTML = scoreRows;
+
+  // お気に入りボタン更新
+  const favBtn = document.getElementById('mFavBtn');
+  if(getFavs().has(ticker)){ favBtn.textContent='⭐ お気に入り済み'; favBtn.style.background='rgba(240,180,41,.2)'; favBtn.style.borderColor='rgba(240,180,41,.5)'; favBtn.style.color='#f0b429'; }
+  else{ favBtn.textContent='☆ お気に入りに追加'; favBtn.style.background='rgba(100,116,139,.1)'; favBtn.style.borderColor='rgba(100,116,139,.3)'; favBtn.style.color='#94a3b8'; }
+  favBtn.onclick = ()=>{
+    const favs=getFavs();
+    if(favs.has(ticker)){favs.delete(ticker);favBtn.textContent='☆ お気に入りに追加';favBtn.style.background='rgba(100,116,139,.1)';favBtn.style.borderColor='rgba(100,116,139,.3)';favBtn.style.color='#94a3b8';}
+    else{favs.add(ticker);favBtn.textContent='⭐ お気に入り済み';favBtn.style.background='rgba(240,180,41,.2)';favBtn.style.borderColor='rgba(240,180,41,.5)';favBtn.style.color='#f0b429';}
+    saveFavs(favs);
+    renderPanel();
+  };
+  // メモ読み込み
+  document.getElementById('mMemoText').value = getMemo(ticker);
+  document.getElementById('mMemoText').oninput = ()=> saveMemo(ticker, document.getElementById('mMemoText').value);
+
+  document.getElementById('modalOverlay').style.display='block';
+  document.getElementById('modalBox').style.display='block';
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').style.display='none';
+  document.getElementById('modalBox').style.display='none';
+  document.body.style.overflow='';
+}
+
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+// ===== ビュー切り替え =====
+let currentView = 'table';
+function setView(view, el){
+  currentView = view;
+  // ナビタブのアクティブ状態を更新
+  document.querySelectorAll('.nav-tab').forEach(b=>{
+    b.classList.toggle('active', b === el);
+  });
+  // 各ビューの表示制御
+  const vscrn = document.getElementById('view-screener');
+  const vheat = document.getElementById('view-heatmap');
+  const vhist = document.getElementById('view-history');
+  const vfav  = document.getElementById('view-favorites');
+  if(vscrn) vscrn.style.display = view==='screener' ? 'block' : 'none';
+  if(vheat) vheat.style.display = view==='heatmap'  ? 'block' : 'none';
+  if(vhist) vhist.style.display = view==='history'  ? 'block' : 'none';
+  if(vfav)  vfav.style.display  = view==='favorites'? 'block' : 'none';
+
+  if(view==='heatmap')   renderHeatmap();
+  if(view==='history')   renderHistory();
+  if(view==='favorites') renderFavs();
+}
+
+// ===== ヒートマップ =====
+let heatAxis = 'sector';
+const SECTOR_COLORS = {
+  'Technology':'#3b82f6','Financial Services':'#f0b429','Healthcare':'#10b981',
+  'Consumer Defensive':'#8b5cf6','Industrials':'#f97316','Energy':'#ef4444',
+  'Communication Services':'#14b8a6','Basic Materials':'#a3e635','Real Estate':'#ec4899',
+  'Utilities':'#06b6d4','Consumer Cyclical':'#c084fc','日本株':'#ff6b6b','—':'#64748b'
+};
+const INV_COLORS = {buffett:'#f0b429',lynch:'#10b981',graham:'#8b5cf6',greenblatt:'#14b8a6',oneil:'#f97316',dalio:'#06b6d4',dreman:'#ec4899',neff:'#a3e635',fisher:'#c084fc',simons:'#67e8f9'};
+
+function setHeatAxis(axis, el){
+  heatAxis = axis;
+  ['heatBtnSector','heatBtnInvestor'].forEach(id=>{
+    const b = document.getElementById(id);
+    b.style.cssText = b.id===el.id
+      ? 'padding:6px 14px;border-radius:8px;border:1px solid rgba(240,180,41,.5);background:rgba(240,180,41,.15);color:#f0b429;font-size:.76rem;font-weight:700;cursor:pointer'
+      : 'padding:6px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:#162035;color:#64748b;font-size:.76rem;cursor:pointer';
+  });
+  renderHeatmap();
+}
+
+function hexToRgb(hex){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `${r},${g},${b}`; }
+
+function renderHeatmap(){
+  if(!DATA) return;
+  const grid = document.getElementById('heatmapGrid');
+  const inv  = DATA.screened[currentKey];
+  if(!inv || !inv.results.length){ grid.innerHTML='<div style="color:var(--muted);padding:20px">データがありません</div>'; return; }
+
+  // 国フィルター適用
+  const results = inv.results.filter(r=> currentCountry==='jp' ? r.isJP===true : r.isJP!==true);
+
+  let cells = [];
+  if(heatAxis==='sector'){
+    // セクター別グループ
+    const groups = {};
+    results.forEach(r=>{
+      const sec = r.isJP ? '日本株' : (r.sector||'—');
+      if(!groups[sec]) groups[sec] = [];
+      groups[sec].push(r);
+    });
+    cells = Object.entries(groups).map(([sec, items])=>{
+      const avg = items.reduce((s,r)=>s+r.score,0)/items.length;
+      const color = SECTOR_COLORS[sec]||'#64748b';
+      const pct   = Math.round(avg/10*100);
+      return { label: sec, score: avg.toFixed(1), count: items.length, color, pct,
+               tickers: items.slice(0,3).map(r=>r.ticker).join(' ') };
+    });
+  } else {
+    // 投資家別：この銘柄が各投資家でいくつスコアを持つか
+    const tickerSet = new Set(results.map(r=>r.ticker));
+    cells = Object.entries(DATA.screened).map(([key, invD])=>{
+      const matched = (invD.results||[]).filter(r=>tickerSet.has(r.ticker) && (currentCountry==='jp'?r.isJP:!r.isJP));
+      const avg = matched.length ? matched.reduce((s,r)=>s+r.score,0)/matched.length : 0;
+      const color = INV_COLORS[key]||'#64748b';
+      const meta  = INV_META[key];
+      return { label: meta?.name||key, score: avg.toFixed(1), count: matched.length, color, pct: Math.round(avg/10*100),
+               tickers: matched.slice(0,2).map(r=>r.ticker).join(' ') };
+    });
+  }
+
+  grid.innerHTML = cells.map(c=>`
+    <div class="heat-cell" style="background:rgba(${hexToRgb(c.color)},.${Math.max(15,Math.round(c.pct/5))});border:1px solid rgba(${hexToRgb(c.color)},.4)">
+      <div class="hc-name">${c.label}</div>
+      <div class="hc-score">${c.score}<span style="font-size:.65rem;opacity:.7">/10</span></div>
+      <div class="hc-ticker">${c.count}銘柄 ${c.tickers}</div>
+    </div>`).join('');
+}
+
+// ===== スコア推移グラフ =====
+let histChart = null;
+async function renderHistory(){
+  try{
+    const res = await fetch('legend_history.json');
+    if(!res.ok) throw new Error();
+    const history = await res.json();
+    if(!history.length){
+      document.getElementById('historyNote').textContent='履歴データがありません。複数回スキャンすると推移が表示されます。';
+      return;
+    }
+    document.getElementById('historyNote').textContent=`${history.length}回分の履歴を表示中`;
+
+    // 現在の投資家の上位5銘柄のスコア推移
+    const topTickers = (DATA.screened[currentKey]?.results||[]).slice(0,5).map(r=>r.ticker);
+    const labels = history.map(h=>h.date.slice(5));
+    const datasets = topTickers.map((t,i)=>{
+      const colors = ['#f0b429','#10b981','#3b82f6','#f97316','#8b5cf6'];
+      return {
+        label: t,
+        data: history.map(h=> h.scores[currentKey]?.[t] ?? null),
+        borderColor: colors[i], backgroundColor:'transparent',
+        borderWidth:2, pointRadius:3, tension:.3, spanGaps:true
+      };
+    });
+
+    if(histChart) histChart.destroy();
+    histChart = new Chart(document.getElementById('historyChart'),{
+      type:'line', data:{labels, datasets},
+      options:{responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},
+        scales:{
+          x:{ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}},
+          y:{min:0,max:10,ticks:{color:'#475569',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}}
+        }}
+    });
+  }catch{
+    const note = document.getElementById('historyNote');
+    if(note) note.textContent='履歴がまだありません。スキャンを2回以上実行すると推移が表示されます。';
+  }
+}
+
+// ===== お気に入り一覧ビュー =====
+function clearFavorites(){
+  if(!confirm('お気に入りを全削除しますか？')) return;
+  localStorage.removeItem('lgFavs');
+  renderFavs();
+}
+
+function renderFavs(){
+  const favArea = document.getElementById('favArea');
+  if(!favArea) return;
+  const favs = getFavs();
+  if(!DATA || !favs.size){
+    favArea.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted)"><p style="font-size:2rem;margin-bottom:12px">⭐</p><p>お気に入りに登録された銘柄がありません。<br>テーブルの⭐ボタンで追加できます。</p></div>';
+    return;
+  }
+  // 全投資家からお気に入り銘柄を集める
+  const favResults = [];
+  const seen = new Set();
+  Object.values(DATA.screened).forEach(inv=>{
+    (inv.results||[]).forEach(r=>{
+      if(favs.has(r.ticker) && !seen.has(r.ticker) && (currentCountry==='jp'?r.isJP===true:r.isJP!==true)){
+        seen.add(r.ticker); favResults.push(r);
+      }
+    });
+  });
+  const inv = INV_META[currentKey];
+  const ths = inv.headers.map(h=>`<th>${h}</th>`).join('');
+  const rows = favResults.map((r,i)=>`<tr>${inv.row(r,i+1)}</tr>`).join('');
+  favArea.innerHTML = favResults.length
+    ? `<div style="font-size:.78rem;color:var(--gold);margin-bottom:10px">⭐ ${favResults.length}件</div><div class="tbl-wrap"><table><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table></div>`
+    : '<div style="text-align:center;padding:30px;color:var(--muted)">現在の投資家・国タブでお気に入りに該当する銘柄がありません。</div>';
+}
+
+// ===== デスクトップ通知 =====
+async function requestNotifPerm(){
+  if(!('Notification' in window)){ alert('このブラウザは通知に対応していません。'); return; }
+  const perm = await Notification.requestPermission();
+  const btn = document.getElementById('vBtnNotif');
+  if(perm==='granted'){
+    btn.textContent='🔔 通知ON';
+    btn.style.cssText='padding:8px 16px;border-radius:8px;border:1px solid rgba(16,185,129,.4);background:rgba(16,185,129,.15);color:#10b981;font-size:.8rem;font-weight:700;cursor:pointer';
+    localStorage.setItem('lgNotif','on');
+    new Notification('レジェンドスクリーナー', { body:'通知が有効になりました！スキャン完了時にお知らせします。', icon:'' });
+  } else {
+    btn.textContent='🔕 通知OFF';
+    localStorage.removeItem('lgNotif');
+  }
+}
+
+function sendNotif(msg){
+  if(Notification.permission==='granted' && localStorage.getItem('lgNotif')==='on'){
+    new Notification('レジェンドスクリーナー', { body: msg });
+  }
+}
+function NM(d){return '';} // 銘柄名はTKに統合
+function SC(d){const p=d.score/d.max;const c=p>=0.75?'sh':p>=0.5?'sm':'sl';return `<td><span class="s-pill ${c}">${d.score}/${d.max}</span></td>`;}
+function JD(d){const p=d.score/d.max;if(p>=0.75)return '<td><span class="j-buy">✅ 買える</span></td>';if(p>=0.5)return '<td><span class="j-watch">👀 要検討</span></td>';return '<td><span class="j-pass">様子見</span></td>';}
+
+let DATA=null, currentKey='buffett', currentCountry='us', dispCount=10, multiFilter=0;
+
+function setMultiFilter(n, el){
+  multiFilter = n;
+  document.querySelectorAll('.mf-btn').forEach(b=>{
+    const isActive = b===el;
+    b.style.cssText = isActive
+      ? 'padding:6px 13px;border-radius:8px;border:1px solid rgba(240,180,41,.4);background:rgba(240,180,41,.15);color:#f0b429;font-size:.76rem;font-weight:700;cursor:pointer'
+      : 'padding:6px 13px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:#162035;color:#64748b;font-size:.76rem;cursor:pointer';
+  });
+  renderPanel();
+}
+
+// 各ティッカーが何人の投資家に選ばれてるか集計
+function buildMultiCountMap(){
+  const map = {};
+  if(!DATA) return map;
+  Object.values(DATA.screened).forEach(inv=>{
+    (inv.results||[]).forEach(r=>{
+      map[r.ticker] = (map[r.ticker]||0) + 1;
+    });
+  });
+  return map;
+}
+
+// ===== LocalStorage: お気に入り =====
+function getFavs(){ try{ return new Set(JSON.parse(localStorage.getItem('lgFavs')||'[]')); }catch{return new Set();} }
+function saveFavs(s){ localStorage.setItem('lgFavs', JSON.stringify([...s])); }
+function toggleFav(ticker, btn){
+  const favs = getFavs();
+  if(favs.has(ticker)){ favs.delete(ticker); btn.classList.remove('active'); }
+  else{ favs.add(ticker); btn.classList.add('active'); }
+  saveFavs(favs);
+}
+
+// ===== LocalStorage: メモ =====
+function getMemo(ticker){ return localStorage.getItem('lgMemo_'+ticker)||''; }
+function saveMemo(ticker, text){ 
+  if(text.trim()) localStorage.setItem('lgMemo_'+ticker, text);
+  else localStorage.removeItem('lgMemo_'+ticker);
+}
+
+function dispBtnStyle(active){
+  return active
+    ? 'background:rgba(240,180,41,.2);border:1px solid rgba(240,180,41,.5);color:#f0b429;padding:8px 16px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;'
+    : 'background:#162035;border:1px solid rgba(255,255,255,.08);color:#64748b;padding:8px 16px;border-radius:8px;font-size:.85rem;cursor:pointer;';
+}
+
+function setDisp(n){ dispCount=n; renderPanel(); }
+
+function setCountry(country, el){
+  currentCountry = country;
+  // タブのスタイル切り替え
+  document.getElementById('tabUS').style.cssText =
+    'flex:1;padding:10px;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer;border:'
+    + (country==='us'
+      ? '1px solid rgba(240,180,41,.4);background:rgba(240,180,41,.15);color:#f0b429'
+      : '1px solid rgba(255,255,255,.08);background:#0f1726;color:#64748b');
+  document.getElementById('tabJP').style.cssText =
+    'flex:1;padding:10px;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer;border:'
+    + (country==='jp'
+      ? '1px solid rgba(59,130,246,.4);background:rgba(59,130,246,.15);color:#60a5fa'
+      : '1px solid rgba(255,255,255,.08);background:#0f1726;color:#64748b');
+  renderPanel();
+}
+
+// 全投資家に登場する銘柄の出現回数をカウント
+function buildTickerCountMap(){
+  const map = {};
+  Object.values(DATA.screened).forEach(inv => {
+    (inv.results || []).forEach(r => {
+      map[r.ticker] = (map[r.ticker] || 0) + 1;
+    });
+  });
+  return map;
+}
+
+// 出現回数に応じた色・ラベルを返す
+function getTickerBadge(ticker, countMap){
+  const total = Object.keys(DATA.screened).length; // 投資家の総数
+  const cnt = countMap[ticker] || 0;
+  if(cnt === total)
+    return `<span title="${cnt}人が選択" style="background:rgba(239,68,68,.2);color:#f87171;border:1px solid rgba(239,68,68,.4);font-size:.58rem;padding:1px 7px;border-radius:99px;font-weight:700;margin-left:5px">🔥${cnt}人</span>`;
+  if(cnt >= Math.ceil(total * 0.75))
+    return `<span title="${cnt}人が選択" style="background:rgba(249,115,22,.18);color:#fb923c;border:1px solid rgba(249,115,22,.4);font-size:.58rem;padding:1px 7px;border-radius:99px;font-weight:700;margin-left:5px">🟠${cnt}人</span>`;
+  if(cnt >= Math.ceil(total * 0.5))
+    return `<span title="${cnt}人が選択" style="background:rgba(234,179,8,.15);color:#fbbf24;border:1px solid rgba(234,179,8,.35);font-size:.58rem;padding:1px 7px;border-radius:99px;font-weight:700;margin-left:5px">🟡${cnt}人</span>`;
+  if(cnt >= 3)
+    return `<span title="${cnt}人が選択" style="background:rgba(16,185,129,.13);color:#34d399;border:1px solid rgba(16,185,129,.3);font-size:.58rem;padding:1px 7px;border-radius:99px;font-weight:700;margin-left:5px">🟢${cnt}人</span>`;
+  if(cnt >= 2)
+    return `<span title="${cnt}人が選択" style="background:rgba(59,130,246,.13);color:#60a5fa;border:1px solid rgba(59,130,246,.3);font-size:.58rem;padding:1px 7px;border-radius:99px;font-weight:700;margin-left:5px">🔵${cnt}人</span>`;
+  return '';
+}
+
+function buildTabs(){
+  const el=document.getElementById('tabsEl');
+  INV_ORDER.forEach(key=>{
+    const m=INV_META[key];
+    const d=DATA.screened[key];
+    const tab=document.createElement('div');
+    tab.className='tab'+(key==='buffett'?' active':'');
+    tab.style.setProperty('--tab-color',m.color);
+    const hitBadge=d?`<div style="font-size:.58rem;color:${m.color};margin-top:2px">${d.hitCount}件ヒット</div>`:'';
+    tab.innerHTML=`<div class="t-icon">${m.icon}</div><div class="t-name">${m.name}</div><div class="t-style">${m.style}</div>${hitBadge}`;
+    tab.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      currentKey=key;
+      renderPanel();
+    };
+    el.appendChild(tab);
+  });
+}
+
+function renderPanel(){
+  _tickerCountMap = buildTickerCountMap();
+  const oldLegend=document.getElementById('legendBar');if(oldLegend)oldLegend.remove();
+  const m=INV_META[currentKey];
+  const rawD=DATA.screened[currentKey];
+  // 国フィルター適用
+  const multiMap = buildMultiCountMap();
+  const d = rawD ? {
+    ...rawD,
+    results: (rawD.results||[]).filter(r => {
+      const countryOk = currentCountry==='jp' ? r.isJP===true : r.isJP!==true;
+      const multiOk   = multiFilter===0 || (multiMap[r.ticker]||0) >= multiFilter;
+      return countryOk && multiOk;
+    })
+  } : rawD;
+  // 国タブのカウント更新
+  if(rawD && rawD.results){
+    const usC = rawD.results.filter(r=>r.isJP!==true).length;
+    const jpC = rawD.results.filter(r=>r.isJP===true).length;
+    document.getElementById('cntUS').textContent = usC ? `(${usC}件)` : '';
+    document.getElementById('cntJP').textContent = jpC ? `(${jpC}件)` : '';
+  }
+  if(!d){return;}
+
+  // 投資家説明
+  document.getElementById('invDesc').innerHTML=`
+    <div class="icon">${m.icon}</div>
+    <div>
+      <h2 style="color:${m.color}">${m.name} <span style="font-size:.72rem;color:var(--muted);font-weight:400">— ${m.style}</span></h2>
+      <p>${m.desc}</p>
+      <div class="chips">${m.criteria.map(c=>`<span class="chip" style="color:${m.color}">${c}</span>`).join('')}</div>
+    </div>`;
+
+  // 緩和バナー
+  const rn=document.getElementById('relaxNote');
+  if(d.relaxed){
+    rn.textContent=`⚠ 通過${d.passedCount}件のため基準を自動緩和（スコア≥${d.threshold}/8）→ ${d.hitCount}件表示`;
+    rn.style.display='flex';
+  }else{rn.style.display='none';}
+
+  // サマリー
+  document.getElementById('sumRow').innerHTML=`
+    <div class="sum-card"><div class="lbl">ヒット件数</div><div class="val" style="color:${m.color}">${d.hitCount}件</div><div class="sub">通過: ${d.passedCount}件（本来基準）</div></div>
+    <div class="sum-card"><div class="lbl">スキャン銘柄数</div><div class="val" style="color:var(--gold)">${DATA.totalScanned}銘柄</div><div class="sub">対象: ${DATA.universe}銘柄</div></div>
+    <div class="sum-card"><div class="lbl">最高スコア銘柄</div><div class="val" style="color:var(--green)">${d.results[0]?.ticker||'—'}</div><div class="sub">${d.results[0]?`${d.results[0].score}/${d.results[0].max}点`:'—'}</div></div>
+    <div class="sum-card"><div class="lbl">生成日時</div><div class="val" style="color:var(--gold);font-size:.9rem">${DATA.generatedAt}</div><div class="sub">最終スキャン</div></div>`;
+
+  // テーブル
+  // 凡例
+  const totalInv = Object.keys(DATA.screened).length;
+  document.getElementById('tblWrap').insertAdjacentHTML('beforebegin',
+    `<div id="legendBar" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;font-size:.7rem;color:var(--muted);align-items:center">
+      <span>複数投資家選出：</span>
+      <span style="background:rgba(239,68,68,.2);color:#f87171;border:1px solid rgba(239,68,68,.4);padding:2px 9px;border-radius:99px">🔥全員</span>
+      <span style="background:rgba(249,115,22,.18);color:#fb923c;border:1px solid rgba(249,115,22,.4);padding:2px 9px;border-radius:99px">🟠75%以上</span>
+      <span style="background:rgba(234,179,8,.15);color:#fbbf24;border:1px solid rgba(234,179,8,.35);padding:2px 9px;border-radius:99px">🟡50%以上</span>
+      <span style="background:rgba(16,185,129,.13);color:#34d399;border:1px solid rgba(16,185,129,.3);padding:2px 9px;border-radius:99px">🟢3人以上</span>
+      <span style="background:rgba(59,130,246,.13);color:#60a5fa;border:1px solid rgba(59,130,246,.3);padding:2px 9px;border-radius:99px">🔵2人</span>
+    </div>`
+  );
+
+  // 表示件数ボタンを更新（if文より前）
+  const total = d.results ? d.results.length : 0;
+  const btnBase = 'padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;border:1px solid;margin:2px;';
+  const btnActive = btnBase + 'background:rgba(240,180,41,.2);border-color:rgba(240,180,41,.5);color:#f0b429;';
+  const btnInactive = btnBase + 'background:#162035;border-color:rgba(255,255,255,.1);color:#64748b;';
+  document.getElementById('dispToggle').innerHTML =
+    [[10,'Top 10'],[50,'Top 50'],[100,'Top 100'],[9999,'全件('+total+')']].map(([n,lbl])=>
+      `<button onclick="setDisp(${n})" style="${dispCount===n?btnActive:btnInactive}">${lbl}</button>`
+    ).join('');
+
+  if(!d.results||d.results.length===0){
+    document.getElementById('tblWrap').innerHTML=`<div style="text-align:center;padding:48px;color:var(--muted)"><p style="font-size:2rem;margin-bottom:12px">🔍</p><p style="font-size:.85rem;line-height:2">この戦略の基準を満たす銘柄はありませんでした。<br>再度 py legend_data.py を実行してください。</p></div>`;
+    return;
+  }
+
+  const ths=m.headers.map(h=>`<th>${h}</th>`).join('');
+  const sliced = dispCount>=9999 ? d.results : d.results.slice(0,dispCount);
+  const rows=sliced.map((r,i)=>`<tr>${m.row(r,i+1)}</tr>`).join('');
+  document.getElementById('tblWrap').innerHTML=`<table><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+async function init(){
+  try{
+    const res=await fetch('legend_result.json');
+    if(!res.ok)throw new Error('not found');
+    DATA=await res.json();
+    document.getElementById('loading').style.display='none';
+    document.getElementById('main').style.display='block';
+    document.getElementById('hdrTime').innerHTML=`生成: ${DATA.generatedAt}<br>${DATA.totalScanned}/${DATA.universe}銘柄 取得成功`;
+    buildTabs();
+    renderPanel();
+  }catch{
+    document.getElementById('loading').style.display='none';
+    document.getElementById('errBox').style.display='block';
+  }
+}
+init();
+</script>
+</body>
+</html>

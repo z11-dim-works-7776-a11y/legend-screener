@@ -688,8 +688,8 @@ function openModal(ticker){
     renderPanel();
   };
   // メモ読み込み
-  document.getElementById('mMemoText').value = getMemo(ticker);
-  document.getElementById('mMemoText').oninput = ()=> saveMemo(ticker, document.getElementById('mMemoText').value);
+  const memoEl=document.getElementById('mMemoArea'); if(memoEl) memoEl.value = getMemo(ticker);
+  if(memoEl) memoEl.oninput = ()=> saveMemo(ticker, memoEl.value);
 
   document.getElementById('modalOverlay').style.display='block';
   document.getElementById('modalBox').style.display='block';
